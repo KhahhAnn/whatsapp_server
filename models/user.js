@@ -1,9 +1,11 @@
 import mongoose, { model, Schema, Types } from "mongoose";
+import { v4 as uuidv4 } from 'uuid'; 
 
-const schema = new Schema({
+
+const userSchema = new Schema({
    userId: {
-      type: Types.UUID,
-      default: () => Types.UUID(),
+      type: String,
+      default: () => uuidv4(), 
       unique: true
    },
    username: {
@@ -43,4 +45,4 @@ const schema = new Schema({
    }
 });
 
-export const User = mongoose.models.User || model("users", schema);
+export const User = mongoose.models.User || model("users", userSchema);
