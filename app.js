@@ -13,12 +13,9 @@ const port = process.env.PORT || 3000;
 const app = express();
 connectDB(mongoURI)
 
-app.use("/user", userRouter);
+// app.use("/user", userRouter);
+app.use("/api", userRouter);
 
-const test = (req, res) => {
-   res.send("Hello world");
-}
-app.get("/", test)
 
 app.listen(port, () => {
    console.log("Server is running on port ", port);   

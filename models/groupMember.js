@@ -1,9 +1,10 @@
 import mongoose, { model, Schema, Types } from "mongoose";
+import { v4 as uuidv4 } from 'uuid'; 
 
 const groupMemberSchema = new Schema({
    groupMemberId: {
-      type: Types.UUID,
-      default: () => Types.UUID(),
+      type: String,
+      default: () => uuidv4(), 
       unique: true
    },
    groupId: {
@@ -12,7 +13,7 @@ const groupMemberSchema = new Schema({
       ref: 'Group'  
    },
    userId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User'  
    },
@@ -25,5 +26,5 @@ const groupMemberSchema = new Schema({
    }
 });
 
-const GroupMember = mongoose.models.GroupMember || model("GroupMember", groupMemberSchema);
+const GroupMember = mongoose.models.GroupMember || model("group_member", groupMemberSchema);
 export default GroupMember;

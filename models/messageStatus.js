@@ -1,18 +1,19 @@
 import mongoose, { model, Schema, Types } from "mongoose";
+import { v4 as uuidv4 } from 'uuid'; 
 
 const messageStatusSchema = new Schema({
    statusId: {
-      type: Types.UUID,
-      default: () => Types.UUID(),
+      type: String,
+      default: () => uuidv4(), 
       unique: true
    },
    messageId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'Message' 
    },
    userId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User'  
    },
@@ -25,5 +26,5 @@ const messageStatusSchema = new Schema({
    }
 });
 
-const MessageStatus = mongoose.models.MessageStatus || model("MessageStatus", messageStatusSchema);
+const MessageStatus = mongoose.models.MessageStatus || model("message_status", messageStatusSchema);
 export default MessageStatus;

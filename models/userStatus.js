@@ -1,13 +1,14 @@
 import mongoose, { model, Schema, Types } from "mongoose";
+import { v4 as uuidv4 } from 'uuid'; 
 
 const userStatusSchema = new Schema({
    statusId: {
-      type: Types.UUID,
-      default: () => Types.UUID(),
+      type: String,
+      default: () => uuidv4(), 
       unique: true
    },
    userId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User' 
    },
@@ -26,5 +27,4 @@ const userStatusSchema = new Schema({
    }
 });
 
-const UserStatus = mongoose.models.UserStatus || model("UserStatus", userStatusSchema);
-export default UserStatus;
+export const UserStatus = mongoose.models.UserStatus || model("user_status", userStatusSchema);

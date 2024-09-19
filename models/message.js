@@ -3,17 +3,17 @@ import { v4 as uuidv4 } from 'uuid';
 
 const messageSchema = new Schema({
    messageId: {
-      type: Types.UUID,
-      default: () => Types.UUID(),
+      type: String,
+      default: () => uuidv4(), 
       unique: true
    },
    senderId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User'  
    },
    receiverId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User'  
    },
@@ -32,5 +32,5 @@ const messageSchema = new Schema({
    }
 });
 
-const Message = mongoose.models.Message || model("Message", messageSchema);
+const Message = mongoose.models.Message || model("message", messageSchema);
 export default Message;

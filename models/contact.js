@@ -1,18 +1,19 @@
 import mongoose, { model, Schema, Types } from "mongoose";
+import { v4 as uuidv4 } from 'uuid'; 
 
 const contactSchema = new Schema({
    contactId: {
-      type: Types.UUID,
-      default: () => Types.UUID(),
+      type: String,
+      default: () => uuidv4(), 
       unique: true
    },
    userId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User'  
    },
    contactUserId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User' 
    },
@@ -28,5 +29,5 @@ const contactSchema = new Schema({
    }
 });
 
-const Contact = mongoose.models.Contact || model("Contact", contactSchema);
+const Contact = mongoose.models.Contact || model("contact", contactSchema);
 export default Contact;

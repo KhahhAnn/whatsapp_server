@@ -1,18 +1,19 @@
-import mongoose, { model, Schema, Types } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
+import { v4 as uuidv4 } from 'uuid'; 
 
 const callSchema = new Schema({
    callId: {
-      type: Types.UUID,
-      default: () => Types.UUID(),
+      type: String,     
+      default: () => uuidv4(), 
       unique: true
    },
    callerId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User'  
    },
    receiverId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User' 
    },
@@ -28,5 +29,4 @@ const callSchema = new Schema({
    }
 });
 
-const Call = mongoose.models.Call || model("Call", callSchema);
-export default Call;
+export const Call = mongoose.models.Call || model("call", callSchema);

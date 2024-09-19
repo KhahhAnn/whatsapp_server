@@ -1,18 +1,19 @@
 import mongoose, { model, Schema, Types } from "mongoose";
+import { v4 as uuidv4 } from 'uuid'; 
 
 const groupChatSchema = new Schema({
    groupChatId: {
-      type: Types.UUID,
-      default: () => Types.UUID(),
+      type: String,
+      default: () => uuidv4(), 
       unique: true
    },
    groupId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'Group'  
    },
    senderId: {
-      type: Types.UUID,
+      type: String,
       required: true,
       ref: 'User'  
    },
@@ -31,5 +32,5 @@ const groupChatSchema = new Schema({
    }
 });
 
-const GroupChat = mongoose.models.GroupChat || model("GroupChat", groupChatSchema);
+const GroupChat = mongoose.models.GroupChat || model("group_chat", groupChatSchema);
 export default GroupChat;
