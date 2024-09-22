@@ -1,5 +1,5 @@
-import mongoose, { model, Schema, Types } from "mongoose";
-import { v4 as uuidv4 } from 'uuid'; 
+import mongoose, { model, Schema } from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
 
 const groupMemberSchema = new Schema({
    groupMemberId: {

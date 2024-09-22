@@ -1,7 +1,7 @@
 import express from "express";
-import { newGroupMember } from "../controllers/GroupMember.js";
 import { login } from "../controllers/login.js";
-import { getCalls } from "../controllers/CallController.js";
+import { newGroupMember } from "../middlewares/GroupMemberService.js";
+import { getCalls } from "../middlewares/CallService.js";
 
 const userRouter = express.Router();
 
