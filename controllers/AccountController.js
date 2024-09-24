@@ -28,7 +28,6 @@ export const loginUser = async (req, res) => {
       const result = await loginUserService({ email, password, rememberMe });
       // Lưu refresh token vào cookie
       res.cookie('refreshToken', result.refreshToken, { 
-         httpOnly: true, 
          maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 7 ngày hoặc 1 ngày
       });
       res.json({ message: "Đăng nhập thành công", accessToken: result.accessToken, refreshToken: result.refreshToken });

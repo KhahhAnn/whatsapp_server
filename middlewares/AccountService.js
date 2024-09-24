@@ -19,8 +19,8 @@ export const registerUserService = async ({ username, email, password, phoneNumb
 
    await newUser.save();
 
-   const accessToken = generateAccessToken(newUser.userId);
-   const refreshToken = generateRefreshToken(newUser.userId);
+   const accessToken = generateAccessToken(newUser);
+   const refreshToken = generateRefreshToken(newUser);
 
    return { 
       userId: newUser.userId,
@@ -42,12 +42,14 @@ export const loginUserService = async ({ email, password, rememberMe }) => {
    }
 
    // Tạo access token
-   const accessToken = generateAccessToken(user.userId);
+   const accessToken = generateAccessToken(user);
+   console.log(accessToken);
+   
 
    // Tạo refresh token với thời hạn phụ thuộc vào rememberMe
    const refreshToken = rememberMe 
-      ? generateRefreshToken(user.userId, "7d")  
-      : generateRefreshToken(user.userId, "1d"); 
+      ? generateRefreshToken(user, "7d")  
+      : generateRefreshToken(user, "1d"); 
 
    return { 
       accessToken,

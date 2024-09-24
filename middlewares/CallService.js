@@ -1,21 +1,41 @@
-import { Call } from "../models/CallsModel.js";
+import { Call } from "../models/Call.js";
 
-export const newCall = async (req, res) => {
-   await Call.create({
-      callerId: "281c0301-3cfa-4f64-98ac-b0cfa56be86a",
-      receiverId: "6be131d4-7bb4-4abf-94ae-6310c376fb0a",
-      startTime: new Date(),
-      endTime: new Date(),
-      callType: "Audio"
-   });
-   res.status(201).json({ message: "Call created successfully!" });
+// Tạo cuộc gọi mới
+export const createCallService = async ({ callerId, receiverId, callType }) => {
+   const startTime = new Date();
+   const newCall = new Call({ callerId, receiverId, startTime, callType });
+   await newCall.save();
+   return newCall;
 };
 
-export const getCalls = async(req, res) => {
+// Kết thúc cuộc gọi
+export const endCallService = async (callId) => {
+   const call = await Call.findOneAndUpdate(
+      { callId: callId },
+      { endTime: new Date() },
+      { new: true }
+   );
+   return call;
+};
+
+// Lấy chi tiết cuộc gọi
+export const getCallDetailsService = async (callId) => {
    try {
-      const calls = await Call.find();
-      res.status(200).json(calls);
+      return await Call.findOne({ callId: callId });
    } catch (error) {
-      res.status(500).json({ message: error.message });
+      throw new Error("Lỗi khi truy vấn dữ liệu: " + error.message);
    }
-}
+};
+
+
+// Lấy danh sách cuộc gọi của một người dùng
+export const getCallsByUserService = async (userId, page = 1, limit = 10) => {
+   const skip = (page - 1) * limit;
+
+   return await Call.find({
+      $or: [{ callerId: userId }, { receiverId: userId }]
+   })
+      .sort({ startTime: -1 })  // Sắp xếp theo thời gian
+      .skip(skip)  // Bỏ qua số lượng cần thiết để phân trang
+      .limit(limit);  // Giới hạn số lượng kết quả
+};

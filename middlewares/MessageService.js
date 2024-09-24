@@ -1,11 +1,30 @@
-import Message from "../models/message.js";
+import Message from "../models/Message.js";
 
-export const newMessage = async (req, res) => {
-   await Message.create({
-      senderId: "281c0301-3cfa-4f64-98ac-b0cfa56be86a",
-      receiverId: "6be131d4-7bb4-4abf-94ae-6310c376fb0a",
-      content: "Hello!",
-      status: "Sent"
-   });
-   res.status(201).json({ message: "Message sent successfully!" });
+// Tạo tin nhắn mới
+export const createMessageService = async ({ senderId, receiverId, content, mediaUrl }) => {
+   const sentAt = new Date();
+   const newMessage = new Message({ senderId, receiverId, content, mediaUrl, sentAt });
+   await newMessage.save();
+   return newMessage;
+};
+
+// Lấy chi tiết tin nhắn
+export const getMessageDetailsService = async (messageId) => {
+   try {
+      return await Message.findOne({ messageId: messageId });
+   } catch (error) {
+      throw new Error("Lỗi khi truy vấn dữ liệu: " + error.message);
+   }
+};
+
+// Lấy danh sách tin nhắn của một người dùng
+export const getMessagesByUserService = async (userId, page = 1, limit = 10) => {
+   const skip = (page - 1) * limit;
+
+   return await Message.find({
+      $or: [{ senderId: userId }, { receiverId: userId }]
+   })
+      .sort({ sentAt: -1 })  // Sắp xếp theo thời gian
+      .skip(skip)  // Bỏ qua số lượng cần thiết để phân trang
+      .limit(limit);  // Giới hạn số lượng kết quả
 };

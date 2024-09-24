@@ -10,12 +10,12 @@ const callSchema = new Schema({
    callerId: {
       type: String,
       required: true,
-      ref: 'User'  
+      ref: 'users' 
    },
    receiverId: {
       type: String,
       required: true,
-      ref: 'User' 
+      ref: 'users' 
    },
    startTime: {
       type: Date,
