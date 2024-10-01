@@ -1,4 +1,4 @@
-import Message from "../models/Message.js";
+import Message from "../models/message.js";
 
 // Tạo tin nhắn mới
 export const createMessageService = async ({ senderId, receiverId, content, mediaUrl }) => {

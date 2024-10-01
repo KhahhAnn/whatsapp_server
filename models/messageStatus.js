@@ -26,5 +26,4 @@ const messageStatusSchema = new Schema({
    }
 });
 
-const MessageStatus = mongoose.models.MessageStatus || model("message_status", messageStatusSchema);
-export default MessageStatus;
+export const MessageStatus = mongoose.models.MessageStatus || model("message_status", messageStatusSchema);
