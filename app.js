@@ -11,7 +11,7 @@ import GroupMemberRouter from "./routes/GroupMemberRouter.js";
 import MessageRouter from "./routes/MessageRouter.js";
 import MessageStatusRouter from "./routes/MessageStatusRouter.js";
 import UserStatusRouter from "./routes/UserStatusRouter.js";
-import { socketHandler } from './websockets/SocketHandler.js'; // Đảm bảo đường dẫn đúng
+import { socketHandler } from './websockets/SocketHandler.js';
 
 
 
@@ -20,7 +20,7 @@ dotenv.config({
 });
 
 const app = express();
-const port = process.env.PORT || 3000;
+const serverPort = process.env.PORT || 3000;
 
 // SECURITY
 app.use(securityHeaders);
@@ -28,6 +28,7 @@ app.use(rateLimiter);
 app.use(corsConfig);
 app.use(parseCookies);
 app.use(express.json());
+
 
 // API ROOT
 app.use("/api/user-status", UserStatusRouter);
@@ -44,10 +45,15 @@ const mongoURI = process.env.MONGO_URI;
 connectDB(mongoURI);
 
 // Tạo WebSocket server
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ port: 8081 });
 
 // Xử lý sự kiện kết nối WebSocket
 wss.on('connection', (ws, req) => {
    socketHandler(ws, req);
+});
+
+
+app.listen(serverPort, () => {
+   console.log(`Server is running on port ${serverPort}`);
 });
 
