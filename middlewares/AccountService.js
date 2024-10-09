@@ -52,6 +52,7 @@ export const loginUserService = async ({ email, password, rememberMe }) => {
       : generateRefreshToken(user, "1d"); 
 
    return { 
+      user,
       accessToken,
       refreshToken
    };

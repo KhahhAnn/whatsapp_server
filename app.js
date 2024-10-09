@@ -12,6 +12,7 @@ import MessageRouter from "./routes/MessageRouter.js";
 import MessageStatusRouter from "./routes/MessageStatusRouter.js";
 import UserStatusRouter from "./routes/UserStatusRouter.js";
 import { socketHandler } from './websockets/SocketHandler.js';
+import UserRouter from './routes/UserRoter.js';
 
 
 
@@ -39,6 +40,7 @@ app.use("/api/group-chat", GroupChatRouter);
 app.use("/api/contact", ContactRouter);
 app.use("/api/account", AccountRouter);
 app.use("/api/call", CallRouter);
+app.use("/api/user", UserRouter);
 
 // CONNECT DB
 const mongoURI = process.env.MONGO_URI;

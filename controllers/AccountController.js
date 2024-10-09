@@ -30,7 +30,7 @@ export const loginUser = async (req, res) => {
       res.cookie('refreshToken', result.refreshToken, { 
          maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 7 ngày hoặc 1 ngày
       });
-      res.json({ message: "Đăng nhập thành công", accessToken: result.accessToken, refreshToken: result.refreshToken });
+      res.json({ message: "Đăng nhập thành công", accessToken: result.accessToken, refreshToken: result.refreshToken , user: result.user});
 
    } catch (err) {
       console.error("Lỗi khi đăng nhập:", err);
