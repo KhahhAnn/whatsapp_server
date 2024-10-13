@@ -16,3 +16,11 @@ export const getUserByEmailService = async (email) => {
    }   
 };
 
+export const getUserByPhoneNumberService = async (phoneNumber) => {
+   try {
+      return await User.findOne({ phoneNumber });
+   } catch (error) {
+      throw new Error("Lỗi khi truy vấn dữ liệu: " + error.message);
+   }   
+};
+

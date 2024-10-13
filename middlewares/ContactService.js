@@ -1,11 +1,16 @@
 import Contact from "../models/Contact.js";
+import { getUserByPhoneNumberService } from "./UserService.js";
 
 // Tạo liên hệ mới
-export const createContactService = async ({ userId, contactUserId, nickname, status }) => {
-   const newContact = new Contact({ userId, contactUserId, nickname, status });
-   await newContact.save();
-   return newContact;
-};
+export const createContactService = async ({ userId, contactPhoneNumber, nickname, status }) => {
+   const contactUserId = await getUserByPhoneNumberService(contactPhoneNumber);
+   if(contactUserId) {
+      const newContact = new Contact({ userId, contactUserId, nickname, status });
+      await newContact.save();
+      return newContact;
+   };
+   return  null;
+}
 
 // Cập nhật liên hệ (nickname hoặc status)
 export const updateContactService = async (contactId, updateData) => {
