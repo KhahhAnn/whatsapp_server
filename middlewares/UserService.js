@@ -24,3 +24,12 @@ export const getUserByPhoneNumberService = async (phoneNumber) => {
    }   
 };
 
+
+export const getAllUsersService = async () => {
+   try {
+      return await User.find(); 
+   } catch (error) {
+      throw new Error("Lỗi khi truy vấn dữ liệu: " + error.message);
+   }
+};
+

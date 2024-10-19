@@ -1,4 +1,4 @@
-import { getUserService, getUserByEmailService, getUserByPhoneNumberService } from "../middlewares/UserService.js";
+import { getUserService, getUserByEmailService, getUserByPhoneNumberService, getAllUsersService } from "../middlewares/UserService.js";
 
 export const getUserDetail = async (req, res) => {
    const { userId } = req.params;
@@ -40,5 +40,17 @@ export const getUserDetailByPhoneNumber = async (req, res) => {
       res.json(user);
    } catch (err) {
       res.status(500).json({ message: "Lỗi khi lấy chi tiết user", error: err.message });
+   }
+};
+
+export const getAllUsers = async (req, res) => {
+   try {
+      const users = await getAllUsersService();
+      if (!users || users.length === 0) {
+         return res.status(404).json({ message: "Không tìm thấy user nào" });
+      }
+      res.json(users);
+   } catch (err) {
+      res.status(500).json({ message: "Lỗi khi lấy danh sách user", error: err.message });
    }
 };
