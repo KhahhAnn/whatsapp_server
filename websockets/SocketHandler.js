@@ -34,6 +34,7 @@ const setupSocketServer = (server) => {
     }
 
     io.emit("getUsersOnline", users);
+    io.emit("userStatusUpdate", { userId: socket.userId, isOnline: true });
 
     // Dùng broadcast để gửi sự kiện userJustConnected tới tất cả người dùng trừ người đã kết nối
     socket.broadcast.emit("userJustConnected", {
@@ -52,6 +53,7 @@ const setupSocketServer = (server) => {
 
     socket.on("disconnect", () => {
       console.log("User disconnected: ", socket.handshake.auth);
+      io.emit("userStatusUpdate", { userId: socket.userId, isOnline: false });
     });
   });
 };
