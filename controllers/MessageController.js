@@ -1,4 +1,4 @@
-import { createMessageService, getMessageDetailsService, getMessagesByUserService } from "../middlewares/MessageService.js";
+import { createMessageService, getMessageDetailsService, getMessagesByUserService, getMessagesBetweenUsersService } from "../middlewares/MessageService.js";
 
 // Tạo tin nhắn mới
 export const createMessage = async (req, res) => {
@@ -38,3 +38,15 @@ export const getMessagesByUser = async (req, res) => {
       res.status(500).json({ message: "Lỗi khi lấy danh sách tin nhắn", error: err.message });
    }
 };
+
+// Lấy danh sách tin nhắn giữa hai người dùng
+export const getMessagesBetweenUsers = async (req, res) => {
+   const { senderId, receiverId } = req.params;
+ 
+   try {
+     const messages = await getMessagesBetweenUsersService(senderId, receiverId);
+     res.json(messages);
+   } catch (err) {
+     res.status(500).json({ message: "Lỗi khi lấy danh sách tin nhắn", error: err.message });
+   }
+ };

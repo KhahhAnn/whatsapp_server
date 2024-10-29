@@ -28,3 +28,14 @@ export const getMessagesByUserService = async (userId, page = 1, limit = 10) => 
       .skip(skip)  // Bỏ qua số lượng cần thiết để phân trang
       .limit(limit);  // Giới hạn số lượng kết quả
 };
+
+// Lấy danh sách tin nhắn giữa hai người dùng
+export const getMessagesBetweenUsersService = async (senderId, receiverId) => {
+   return await Message.find({
+     $or: [
+       { senderId: senderId, receiverId: receiverId },
+       { senderId: receiverId, receiverId: senderId }
+     ]
+   })
+      .sort({ sentAt: -1 }); // Sắp xếp theo thời gian
+};
