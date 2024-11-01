@@ -37,5 +37,5 @@ export const getMessagesBetweenUsersService = async (senderId, receiverId) => {
        { senderId: receiverId, receiverId: senderId }
      ]
    })
-      .sort({ sentAt: -1 }); // Sắp xếp theo thời gian
+      .sort({ sentAt: 1 }); // Sắp xếp theo thời gian
 };

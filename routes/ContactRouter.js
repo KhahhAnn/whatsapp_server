@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticateToken } from "../security/JwtConfig.js";
-import { createContact, deleteContact, getContactsByUser, updateContact } from "../controllers/ContactService.js";
+import { createContact, deleteContact, getContactsByUser, updateContact } from "../controllers/ContactController.js";
 
 const ContactRouter = express.Router();
 
