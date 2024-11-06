@@ -30,7 +30,7 @@ export const getUserDetailByEmail = async (req, res) => {
 
 
 export const getUserDetailByPhoneNumber = async (req, res) => {
-   const { phoneNumber } = req.body;
+   const phoneNumber = req.query.phoneNumber;
 
    try {
       const user = await getUserByPhoneNumberService(phoneNumber);
