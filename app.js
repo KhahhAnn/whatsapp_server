@@ -17,7 +17,9 @@ import MessageRouter from "./routes/MessageRouter.js";
 import MessageStatusRouter from "./routes/MessageStatusRouter.js";
 import UserStatusRouter from "./routes/UserStatusRouter.js";
 import UserRouter from "./routes/UserRoter.js";
+import jwt from 'jsonwebtoken';
 import { setupSocketServer } from "./websockets/SocketHandler.js"; // Import SocketHandler
+import { log } from "console";
 
 dotenv.config({
   path: "./.env",
@@ -53,6 +55,27 @@ const server = http.createServer(app);
 
 // Thiết lập Socket.IO
 setupSocketServer(server); // Gọi hàm thiết lập socket server
+
+const API_KEY_SID = process.env.API_KEY_SID;
+const API_KEY_SECRET = process.env.API_KEY_SECRET;
+
+app.post("/api/token", (req, res) => {
+  const userId = req.body.from;
+
+  const now = Math.floor(Date.now() / 1000);
+  
+  const payload = {
+    jti: API_KEY_SID + "-" + now,
+    iss: API_KEY_SID,
+    exp: now + 3600,
+    userId: userId
+  };
+
+  const token = jwt.sign(payload, API_KEY_SECRET, { algorithm: 'HS256' });
+  
+  res.json({ access_token: token });
+});
+
 
 server.listen(8080, () => {
   console.log(`Server is running on port : 8080`);
