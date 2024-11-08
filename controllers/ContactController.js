@@ -1,5 +1,5 @@
 import { createContactService, deleteContactService, getContactsByUserService, updateContactService } from "../middlewares/ContactService.js";
-
+import { emitContactRequest } from "../websockets/SocketHandler.js";
 // Tạo liên hệ mới
 export const createContact = async (req, res) => {
    const { userId, contactUserId, nickname, status } = req.body;
@@ -7,6 +7,7 @@ export const createContact = async (req, res) => {
    try {
       const contact = await createContactService({ userId, contactUserId, nickname, status });
       res.status(201).json({ message: "Tạo liên hệ thành công", contact });
+      emitContactRequest(userId, contactUserId, nickname);
    } catch (err) {
       res.status(500).json({ message: "Lỗi khi tạo liên hệ", error: err.message });
    }

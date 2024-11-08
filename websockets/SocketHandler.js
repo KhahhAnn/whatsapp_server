@@ -1,7 +1,10 @@
 import { Server } from "socket.io";
 
+let io; // Định nghĩa biến io ở đây
+const userSockets = new Map(); // Lưu trữ mối quan hệ giữa userId và socketId
+
 const setupSocketServer = (server) => {
-  const io = new Server(server, {
+  io = new Server(server, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -21,41 +24,48 @@ const setupSocketServer = (server) => {
 
   io.on("connection", (socket) => {
     console.log("A user connected: ", socket.handshake.auth);
-
-    socket.join(socket.userId)
+    userSockets.set(socket.userId, socket.id); // Lưu userID và socketID vào Map
+    socket.join(socket.userId);
 
     const users = [];
 
     for (let [id, socket] of io.of("/").sockets) {
       users.push({
-        userId: socket.userId, // Sử dụng userId đã gán
-        socketId: id, // Lưu lại socketId để phát tin nhắn tới người dùng đích
+        userId: socket.userId,
+        socketId: id,
       });
     }
 
     io.emit("getUsersOnline", users);
     io.emit("userStatusUpdate", { userId: socket.userId, isOnline: true });
 
-    // Dùng broadcast để gửi sự kiện userJustConnected tới tất cả người dùng trừ người đã kết nối
     socket.broadcast.emit("userJustConnected", {
       userId: socket.userId,
       socketId: socket.id,
     });
 
-    // Nhận tin nhắn từ người gửi và gửi tin nhắn tới người nhận
     socket.on("privateMessage", ({ message, to }) => {
       console.log("Received message: ", message, to);
       socket.to(to).emit("privateMessageToReceiver", {
         message: message,
-        from: socket.userId, // Đổi từ socket.id sang socket.userId
+        from: socket.userId,
       });
     });
 
     socket.on("disconnect", () => {
       console.log("User disconnected: ", socket.handshake.auth);
+      userSockets.delete(socket.userId); // Xóa từ Map khi người dùng ngắt kết nối
       io.emit("userStatusUpdate", { userId: socket.userId, isOnline: false });
     });
   });
 };
 
-export { setupSocketServer };
+// Hàm để phát sự kiện contactRequest
+const emitContactRequest = (from, to, nickname) => {
+  const receiverSocketId = userSockets.get(to);
+  if (receiverSocketId) {
+    io.to(receiverSocketId).emit("contactRequest", { from, to, nickname });
+  }
+};
+
+export { setupSocketServer, emitContactRequest };
