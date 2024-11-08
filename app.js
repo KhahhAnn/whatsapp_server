@@ -19,7 +19,6 @@ import UserStatusRouter from "./routes/UserStatusRouter.js";
 import UserRouter from "./routes/UserRoter.js";
 import jwt from 'jsonwebtoken';
 import { setupSocketServer } from "./websockets/SocketHandler.js"; // Import SocketHandler
-import { log } from "console";
 
 dotenv.config({
   path: "./.env",
