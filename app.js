@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import express from "express";
+import bodyParser from "body-parser";
 import http from "http";
 import AccountRouter from "./routes/AccountRouter.js";
 import CallRouter from "./routes/CallRouter.js";
@@ -26,6 +27,8 @@ dotenv.config({
 
 const app = express();
 const serverPort = process.env.PORT || 3000;
+app.use(bodyParser.json({ limit: '10mb' })); // Thay đổi '10mb' thành kích thước bạn muốn
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // SECURITY
 app.use(securityHeaders);

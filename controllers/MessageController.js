@@ -1,4 +1,4 @@
-import { createMessageService, getMessageDetailsService, getMessagesByUserService, getMessagesBetweenUsersService } from "../middlewares/MessageService.js";
+import { createMessageService, getMessageDetailsService, getMessagesByUserService, getMessagesBetweenUsersService, deleteMessageService } from "../middlewares/MessageService.js";
 
 // Tạo tin nhắn mới
 export const createMessage = async (req, res) => {
@@ -50,3 +50,18 @@ export const getMessagesBetweenUsers = async (req, res) => {
      res.status(500).json({ message: "Lỗi khi lấy danh sách tin nhắn", error: err.message });
    }
  };
+
+ // Xóa tin nhắn
+export const deleteMessage = async (req, res) => {
+   const { messageId } = req.params;
+
+   try {
+      const isDeleted = await deleteMessageService(messageId);
+      if (!isDeleted) {
+         return res.status(404).json({ message: "Không tìm thấy tin nhắn để xóa" });
+      }
+      res.json({ message: "Xóa tin nhắn thành công" });
+   } catch (err) {
+      res.status(500).json({ message: "Lỗi khi xóa tin nhắn", error: err.message });
+   }
+};

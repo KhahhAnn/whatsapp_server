@@ -39,3 +39,9 @@ export const getMessagesBetweenUsersService = async (senderId, receiverId) => {
    })
       .sort({ sentAt: 1 }); // Sắp xếp theo thời gian
 };
+
+// Xoá tin nhắn
+export const deleteMessageService = async (messageId) => {
+   const result = await Message.deleteOne({ messageId });
+   return result.deletedCount > 0; // Trả về true nếu xóa thành công
+};
