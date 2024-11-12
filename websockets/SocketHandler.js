@@ -46,6 +46,9 @@ const setupSocketServer = (server) => {
 
     socket.on("privateMessage", ({ message, to }) => {
       console.log("Received message: ", message, to);
+      if (message.startsWith("data:image/") || message.startsWith("data:video/")) {
+        console.log("Sending image/video message");
+      }
       socket.to(to).emit("privateMessageToReceiver", {
         message: message,
         from: socket.userId,

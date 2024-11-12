@@ -2,8 +2,29 @@ import {
    createGroupChatService, 
    getGroupChatsByGroupIdService, 
    updateGroupChatStatusService, 
-   deleteGroupChatService 
+   deleteGroupChatService,
+   addGroupMemberService,
+   getGroupChatsByUserIdService,
 } from "../middlewares/GroupChatService.js";
+
+import Group from "../models/groups.js";
+
+// Tạo nhóm chat mới
+export const createGroup = async (req, res) => {
+   const { groupName, createdBy } = req.body;
+
+   try {
+      const newGroup = new Group({ groupName, createdBy });
+      await newGroup.save();
+
+      // Thêm người tạo nhóm vào danh sách thành viên
+      await addGroupMemberService({ groupId: newGroup.groupId, userId: createdBy, role: 'admin' });
+
+      res.status(201).json({ message: "Tạo nhóm thành công", newGroup });
+   } catch (err) {
+      res.status(500).json({ message: "Lỗi khi tạo nhóm", error: err.message });
+   }
+};
 
 // Tạo tin nhắn nhóm mới
 export const createGroupChat = async (req, res) => {
@@ -14,6 +35,18 @@ export const createGroupChat = async (req, res) => {
       res.status(201).json({ message: "Tạo tin nhắn thành công", message });
    } catch (err) {
       res.status(500).json({ message: "Lỗi khi tạo tin nhắn", error: err.message });
+   }
+};
+
+// Lấy danh sách group chat theo userId
+export const getGroupChatsByUserId = async (req, res) => {
+   const { userId } = req.params;
+
+   try {
+      const groupChats = await getGroupChatsByUserIdService(userId); // Update to use the new service
+      res.json(groupChats);
+   } catch (err) {
+      res.status(500).json({ message: "Lỗi khi lấy danh sách group chat", error: err.message });
    }
 };
 

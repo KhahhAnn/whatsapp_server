@@ -12,7 +12,7 @@ import {
 } from "./security/SecurityConfig.js";
 import { connectDB } from "./utils/features.js";
 import ContactRouter from "./routes/ContactRouter.js";
-import GroupChatRouter from "./routes/GroupChatController.js";
+import GroupChatRouter from "./routes/GroupChatRouter.js";
 import GroupMemberRouter from "./routes/GroupMemberRouter.js";
 import MessageRouter from "./routes/MessageRouter.js";
 import MessageStatusRouter from "./routes/MessageStatusRouter.js";
