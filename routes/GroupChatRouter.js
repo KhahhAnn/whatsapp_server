@@ -1,13 +1,20 @@
 import express from "express";
 import { authenticateToken } from "../security/JwtConfig.js";
-import { createGroup, createGroupChat, deleteGroupChat, getGroupChatsByGroupId, updateGroupChatStatus, getGroupChatsByUserId } from "../controllers/GroupChatController.js";
+import { getGroupMessagesByGroupId, getGroupByUserId, createGroup, sendGroupMessage, updateGroupMessageStatus, deleteGroupMessage, getAllGroup } from "../controllers/GroupChatController.js";
 
 const GroupChatRouter = express.Router();
-
-GroupChatRouter.get("/:groupId", authenticateToken, getGroupChatsByGroupId);
-GroupChatRouter.get("/group-user/:userId", authenticateToken, getGroupChatsByUserId);
+//API lấy ra tin nhắn theo groupId
+GroupChatRouter.get("/messages/:groupId", authenticateToken, getGroupMessagesByGroupId);
+//API lấy ra các group theo userId
+GroupChatRouter.get("/group-user/:userId", authenticateToken, getGroupByUserId);
+//API tạo group
 GroupChatRouter.post("/create-group", authenticateToken, createGroup);
-GroupChatRouter.post("/", authenticateToken, createGroupChat);
-GroupChatRouter.put("/:groupId", authenticateToken, updateGroupChatStatus);
-GroupChatRouter.delete("/groupChatId", authenticateToken, deleteGroupChat);
+//API gửi tin nhắn
+GroupChatRouter.post("/send-message", authenticateToken, sendGroupMessage);
+//API cập nhật trạng thái tin nhắn
+GroupChatRouter.put("/update-status/:groupId", authenticateToken, updateGroupMessageStatus);
+//API xoá tin nhắn
+GroupChatRouter.delete("/delete-message/:groupChatId", authenticateToken, deleteGroupMessage);
+//API lấy ra tất cả các group
+GroupChatRouter.get("/all-group", authenticateToken, getAllGroup);
 export default GroupChatRouter;

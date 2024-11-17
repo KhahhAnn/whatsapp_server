@@ -1,15 +1,41 @@
 import { 
-   createGroupChatService, 
-   getGroupChatsByGroupIdService, 
-   updateGroupChatStatusService, 
-   deleteGroupChatService,
+   sendGroupMessageService, 
+   getGroupMessagesByGroupIdService, 
+   updateGroupMessageStatusService, 
+   deleteGroupMessageService,
    addGroupMemberService,
-   getGroupChatsByUserIdService,
+   getGroupByUserIdService,
+   getAllGroupService,
 } from "../middlewares/GroupChatService.js";
 
 import Group from "../models/groups.js";
 
-// Tạo nhóm chat mới
+//API lấy ra tin nhắn theo groupId
+export const getGroupMessagesByGroupId = async (req, res) => {
+   const { groupId } = req.params;
+   const { page, limit } = req.query;
+
+   try {
+      const messages = await getGroupMessagesByGroupIdService(groupId, page, limit);
+      res.json(messages);
+   } catch (err) {
+      res.status(500).json({ message: "Lỗi khi lấy tin nhắn nhóm", error: err.message });
+   }
+};
+
+//API lấy ra các group theo userId
+export const getGroupByUserId = async (req, res) => {
+   const { userId } = req.params;
+
+   try {
+      const groupChats = await getGroupByUserIdService(userId); // Update to use the new service
+      res.json(groupChats);
+   } catch (err) {
+      res.status(500).json({ message: "Lỗi khi lấy danh sách group chat", error: err.message });
+   }
+};
+
+//API tạo group
 export const createGroup = async (req, res) => {
    const { groupName, createdBy } = req.body;
 
@@ -26,50 +52,25 @@ export const createGroup = async (req, res) => {
    }
 };
 
-// Tạo tin nhắn nhóm mới
-export const createGroupChat = async (req, res) => {
+//API gửi tin nhắn
+export const sendGroupMessage = async (req, res) => {
    const { groupId, senderId, content, mediaUrl, status } = req.body;
 
    try {
-      const message = await createGroupChatService({ groupId, senderId, content, mediaUrl, status });
+      const message = await sendGroupMessageService({ groupId, senderId, content, mediaUrl, status });
       res.status(201).json({ message: "Tạo tin nhắn thành công", message });
    } catch (err) {
       res.status(500).json({ message: "Lỗi khi tạo tin nhắn", error: err.message });
    }
 };
 
-// Lấy danh sách group chat theo userId
-export const getGroupChatsByUserId = async (req, res) => {
-   const { userId } = req.params;
-
-   try {
-      const groupChats = await getGroupChatsByUserIdService(userId); // Update to use the new service
-      res.json(groupChats);
-   } catch (err) {
-      res.status(500).json({ message: "Lỗi khi lấy danh sách group chat", error: err.message });
-   }
-};
-
-// Lấy danh sách tin nhắn theo groupId
-export const getGroupChatsByGroupId = async (req, res) => {
-   const { groupId } = req.params;
-   const { page, limit } = req.query;
-
-   try {
-      const messages = await getGroupChatsByGroupIdService(groupId, page, limit);
-      res.json(messages);
-   } catch (err) {
-      res.status(500).json({ message: "Lỗi khi lấy tin nhắn nhóm", error: err.message });
-   }
-};
-
 // Cập nhật trạng thái tin nhắn
-export const updateGroupChatStatus = async (req, res) => {
+export const updateGroupMessageStatus = async (req, res) => {
    const { groupChatId } = req.params;
    const { status } = req.body;
 
    try {
-      const updatedMessage = await updateGroupChatStatusService(groupChatId, status);
+      const updatedMessage = await updateGroupMessageStatusService(groupChatId, status);
       if (!updatedMessage) {
          return res.status(404).json({ message: "Không tìm thấy tin nhắn" });
       }
@@ -80,16 +81,26 @@ export const updateGroupChatStatus = async (req, res) => {
 };
 
 // Xóa tin nhắn
-export const deleteGroupChat = async (req, res) => {
+export const deleteGroupMessage = async (req, res) => {
    const { groupChatId } = req.params;
 
    try {
-      const deletedMessage = await deleteGroupChatService(groupChatId);
+      const deletedMessage = await deleteGroupMessageService(groupChatId);
       if (!deletedMessage) {
          return res.status(404).json({ message: "Không tìm thấy tin nhắn" });
       }
       res.json({ message: "Xóa tin nhắn thành công", deletedMessage });
    } catch (err) {
       res.status(500).json({ message: "Lỗi khi xóa tin nhắn", error: err.message });
+   }
+};
+
+//API lấy ra tất cả các group
+export const getAllGroup = async (req, res) => {
+   try {
+      const groups = await getAllGroupService();
+      res.json(groups);
+   } catch (err) {
+      res.status(500).json({ message: "Lỗi khi lấy tất cả các group", error: err.message });
    }
 };
