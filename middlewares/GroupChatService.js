@@ -12,18 +12,6 @@ export const getGroupMessagesByGroupIdService = async (groupId, page = 1, limit 
       .limit(limit);  // Giới hạn số lượng kết quả
 };
 
-//Lấy danh sách group chat theo userId
-export const getGroupByUserIdService = async (userId) => {
-   // Tìm tất cả các groupId mà userId là thành viên
-   const groupMembers = await GroupMember.find({ userId });
-   console.log(groupMembers);
-   const groupIds = groupMembers.map(member => member.groupId);
-   console.log(groupIds);
-
-   // Lấy tất cả group chat cho các groupId này
-   return await Group.find({ groupId: { $in: groupIds } }).populate('groupId senderId');
-};
-
 // Thêm thành viên vào nhóm
 export const addGroupMemberService = async ({ groupId, userId, role }) => {
    const newMember = new GroupMember({ groupId, userId, role });
@@ -31,6 +19,15 @@ export const addGroupMemberService = async ({ groupId, userId, role }) => {
    return newMember;
 };
 
+//Lấy ra các group với userId là thành viên
+export const getGroupByUserIdService = async (userId) => {
+   //Tìm tất cả các groupId mà userId là thành viên
+   const groupMembers = await GroupMember.find({ userId });
+   //Lấy ra các groupId từ các thành viên
+   const groupIds = groupMembers.map(member => member.groupId);
+   //Lấy tất cả group chat cho các groupId này
+   return await Group.find({ groupId: { $in: groupIds } }).populate('groupId');
+};
 
 // Tạo tin nhắn nhóm mới
 export const sendGroupMessageService = async ({ groupId, senderId, content, mediaUrl, status }) => {

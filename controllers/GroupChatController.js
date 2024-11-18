@@ -25,13 +25,12 @@ export const getGroupMessagesByGroupId = async (req, res) => {
 
 //API lấy ra các group theo userId
 export const getGroupByUserId = async (req, res) => {
-   const { userId } = req.params;
-
+   const userId = req.params.userId;
    try {
-      const groupChats = await getGroupByUserIdService(userId); // Update to use the new service
-      res.json(groupChats);
-   } catch (err) {
-      res.status(500).json({ message: "Lỗi khi lấy danh sách group chat", error: err.message });
+       const groups = await getGroupByUserIdService(userId); // Gọi service để lấy nhóm
+       res.status(200).json(groups);
+   } catch (error) {
+       res.status(500).json({ message: "Lỗi khi lấy danh sách nhóm", error });
    }
 };
 
