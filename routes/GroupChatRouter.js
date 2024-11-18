@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticateToken } from "../security/JwtConfig.js";
-import { getGroupMessagesByGroupId, getGroupByUserId, createGroup, sendGroupMessage, updateGroupMessageStatus, deleteGroupMessage, getAllGroup } from "../controllers/GroupChatController.js";
+import { getGroupMessagesByGroupId, getGroupByUserId, createGroup, sendGroupMessage, updateGroupMessageStatus, deleteGroupMessage, deleteGroup, getAllGroup } from "../controllers/GroupChatController.js";
 
 const GroupChatRouter = express.Router();
 //API lấy ra tin nhắn theo groupId
@@ -17,4 +17,6 @@ GroupChatRouter.put("/update-status/:groupId", authenticateToken, updateGroupMes
 GroupChatRouter.delete("/delete-message/:groupChatId", authenticateToken, deleteGroupMessage);
 //API lấy ra tất cả các group
 GroupChatRouter.get("/all-group", authenticateToken, getAllGroup);
+//API xóa group
+GroupChatRouter.delete("/delete-group/:groupId", authenticateToken, deleteGroup);
 export default GroupChatRouter;

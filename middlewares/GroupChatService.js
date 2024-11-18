@@ -52,6 +52,12 @@ export const deleteGroupMessageService = async (groupChatId) => {
    return deletedMessage;
 };
 
+// Xóa group
+export const deleteGroupService = async (groupId) => {
+   const deletedGroup = await Group.findOneAndDelete({ groupId: groupId });
+   return deletedGroup;
+};
+
 // Lấy ra tất cả các group
 export const getAllGroupService = async () => {
    return await Group.find();

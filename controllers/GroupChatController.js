@@ -6,6 +6,7 @@ import {
    addGroupMemberService,
    getGroupByUserIdService,
    getAllGroupService,
+   deleteGroupService
 } from "../middlewares/GroupChatService.js";
 
 import Group from "../models/groups.js";
@@ -54,14 +55,22 @@ export const createGroup = async (req, res) => {
 //API gửi tin nhắn
 export const sendGroupMessage = async (req, res) => {
    const { groupId, senderId, content, mediaUrl, status } = req.body;
-
+ 
    try {
-      const message = await sendGroupMessageService({ groupId, senderId, content, mediaUrl, status });
-      res.status(201).json({ message: "Tạo tin nhắn thành công", message });
+     // Lưu tin nhắn vào cơ sở dữ liệu
+     const message = await sendGroupMessageService({ groupId, senderId, content, mediaUrl, status });
+ 
+     // Phát sự kiện đến các thành viên trong nhóm
+     io.to(groupId).emit("groupMessageToMembers", {
+       message: content,
+       from: senderId,
+     });
+ 
+     res.status(201).json({ message: "Tạo tin nhắn thành công", message });
    } catch (err) {
-      res.status(500).json({ message: "Lỗi khi tạo tin nhắn", error: err.message });
+     res.status(500).json({ message: "Lỗi khi tạo tin nhắn", error: err.message });
    }
-};
+ };
 
 // Cập nhật trạng thái tin nhắn
 export const updateGroupMessageStatus = async (req, res) => {
@@ -93,6 +102,18 @@ export const deleteGroupMessage = async (req, res) => {
       res.status(500).json({ message: "Lỗi khi xóa tin nhắn", error: err.message });
    }
 };
+
+//Xóa group
+export const deleteGroup = async (req, res) => {
+   const { groupId } = req.params;
+
+   try {
+      const deletedGroup = await deleteGroupService(groupId);
+      res.json({ message: "Xóa group thành công", deletedGroup });
+   } catch (err) {
+      res.status(500).json({ message: "Lỗi khi xóa group", error: err.message });
+   }
+}
 
 //API lấy ra tất cả các group
 export const getAllGroup = async (req, res) => {

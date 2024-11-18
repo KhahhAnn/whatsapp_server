@@ -56,6 +56,19 @@ const setupSocketServer = (server) => {
       });
     });
 
+    socket.on("joinGroup", (groupId) => {
+      socket.join(groupId);
+      console.log(`User ${socket.userId} joined group ${groupId}`);
+    });
+
+    socket.on("groupMessage", ({ groupId, message }) => {
+      console.log(`Received group message: ${message} for group ${groupId}`);
+      io.to(groupId).emit("groupMessageToMembers", {
+        message,
+        from: socket.userId,
+      });
+    });
+
     socket.on("disconnect", () => {
       console.log("User disconnected: ", socket.handshake.auth);
       userSockets.delete(socket.userId); // Xóa từ Map khi người dùng ngắt kết nối
