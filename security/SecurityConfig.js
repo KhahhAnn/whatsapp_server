@@ -1,15 +1,15 @@
-import rateLimit from 'express-rate-limit';
+// import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import cors from 'cors';
-import csrf from 'csurf';
+// import csrf from 'csurf';
 import cookieParser from 'cookie-parser';
 
 // Rate limiting: giới hạn số lượng request từ 1 IP trong 15 phút
-export const rateLimiter = rateLimit({
-   windowMs: 15 * 60 * 1000, // 15 phút
-   max: 100, 
-   message: "Bạn đã gửi quá nhiều yêu cầu, vui lòng thử lại sau 15 phút."
-});
+// export const rateLimiter = rateLimit({
+//    windowMs: 15 * 60 * 1000, // 15 phút
+//    max: 100, 
+//    message: "Bạn đã gửi quá nhiều yêu cầu, vui lòng thử lại sau 15 phút."
+// });
 
 export const securityHeaders = helmet();
 

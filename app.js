@@ -7,7 +7,7 @@ import CallRouter from "./routes/CallRouter.js";
 import {
   corsConfig,
   parseCookies,
-  rateLimiter,
+  // rateLimiter,
   securityHeaders,
 } from "./security/SecurityConfig.js";
 import { connectDB } from "./utils/features.js";
@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // SECURITY
 app.use(securityHeaders);
-app.use(rateLimiter);
+// app.use(rateLimiter);
 app.use(corsConfig);
 app.use(parseCookies);
 app.use(express.json());
