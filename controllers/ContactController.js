@@ -2,6 +2,7 @@ import {
   createContactService,
   deleteContactService,
   getContactsByUserService,
+  getContactsByContactUserIdService,
   updateContactService,
 } from "../middlewares/ContactService.js";
 import { emitContactRequest } from "../websockets/SocketHandler.js";
@@ -132,4 +133,11 @@ export const getContactsByUser = async (req, res) => {
       .status(500)
       .json({ message: "Lỗi khi lấy danh sách liên hệ", error: err.message });
   }
+};
+
+// Lấy danh sách liên hệ của một người dùng theo contactUserId
+export const getContactsByContactUserId = async (req, res) => {
+  const { contactUserId } = req.params;
+  const contacts = await getContactsByContactUserIdService(contactUserId);
+  res.json(contacts);
 };

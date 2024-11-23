@@ -1,5 +1,5 @@
 import { deleteUserService, loginUserService, registerUserService, updateUserService } from "../middlewares/AccountService.js";
-
+import { getContactsByUserService, updateContactService, getContactsByContactUserIdService } from "../middlewares/ContactService.js";
 // Đăng ký người dùng
 export const registerUser = async (req, res) => {
    if (!req.body) {
@@ -45,6 +45,15 @@ export const updateUser = async (req, res) => {
 
    try {
       const updatedUser = await updateUserService(userId, { phoneNumber, profilePicture });
+      
+      // Cập nhật status của các liên hệ của user theo contactUserId
+      const contacts = await getContactsByContactUserIdService(userId);
+      for (const contact of contacts) {
+         await updateContactService(contact.contactId, { status: profilePicture });
+
+      }
+
+
       res.json({ message: "Cập nhật thành công", updatedUser });
    } catch (err) {
       console.error("Lỗi khi cập nhật thông tin:", err);

@@ -33,3 +33,8 @@ export const getContactsByUserService = async (userId, page = 1, limit = 10) => 
       .skip(skip)  // Bỏ qua số lượng cần thiết để phân trang
       .limit(limit);  // Giới hạn số lượng kết quả
 };
+
+//Lấy danh sách liên hệ của một người dùng theo contactUserId
+export const getContactsByContactUserIdService = async (contactUserId) => {
+   return await Contact.find({ contactUserId: contactUserId });
+};
