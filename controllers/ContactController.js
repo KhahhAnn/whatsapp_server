@@ -6,9 +6,10 @@ import {
   updateContactService,
 } from "../middlewares/ContactService.js";
 import { emitContactRequest } from "../websockets/SocketHandler.js";
+import Contact from "../models/contact.js";
 
 export const createContact = async (req, res) => {
-  const { userId, contactUserId, nickname, status } = req.body;
+  const { userId, contactUserId, nickname, senderNickname } = req.body;
 
   try {
     if (userId === contactUserId) {
@@ -17,22 +18,39 @@ export const createContact = async (req, res) => {
         .json({ message: "Không thể thêm chính mình vào danh sách liên hệ" });
     }
 
-    const existingContact = await getContactsByUserService(userId);
-    const contactExists = existingContact.some(
-      (contact) => contact.contactUserId === contactUserId
-    );
+    // Kiểm tra xem đã có lời mời nào chưa
+    const existingRequest = await Contact.findOne({
+      userId: userId,
+      contactUserId: contactUserId,
+      status: "pending",
+    });
 
-    if (contactExists) {
-      return res.status(400).json({ message: "User đã có liên hệ này rồi" });
+    if (existingRequest) {
+      return res
+        .status(400)
+        .json({ message: "Đã gửi lời mời đến người dùng này." });
     }
 
-    // Phát sự kiện lời mời thêm liên hệ
-    emitContactRequest(userId, contactUserId, nickname);
-    console.log("Contact request emitted: ", {
+    // Tạo một lời mời mới với nickname của contact A và người gửi lời mời
+    const newContactRequest = new Contact({
       userId,
       contactUserId,
-      nickname,
+      nickname: nickname, // nickname của contact A
+      senderNickname: senderNickname, // nickname của người gửi lời mời
+      status: "pending",
     });
+
+    await newContactRequest.save();
+    //Log ra nickname của contact A và người gửi lời mời
+    console.log(
+      "Nickname của người nhận lời mời: ",
+      nickname,
+      "Nickname của người gửi lời mời: ",
+      senderNickname
+    );
+
+    // Phát sự kiện lời mời thêm liên hệ với cả nickname của contact A và người gửi lời mời
+    emitContactRequest(userId, contactUserId, nickname, senderNickname);
     res.status(200).json({ message: "Lời mời đã được gửi" });
   } catch (err) {
     res
@@ -42,46 +60,81 @@ export const createContact = async (req, res) => {
 };
 
 export const acceptContactRequest = async (req, res) => {
-  const { userId, contactUserId, nickname, status } = req.body;
+  const { userId, contactUserId, senderNickname } = req.body;
 
   try {
-    // Kiểm tra xem liên hệ đã tồn tại hay chưa
-    const existingContacts = await getContactsByUserService(userId);
-    const contactExists = existingContacts.some(
-      (contact) => contact.contactUserId === contactUserId
+    // Tìm và xóa lời mời
+    const deletedRequest = await Contact.findOneAndDelete(
+      {
+        userId: contactUserId,
+        contactUserId: userId,
+        senderNickname: senderNickname,
+        status: "pending",
+      }
     );
 
-    if (contactExists) {
+    if (!deletedRequest) {
       return res
-        .status(400)
-        .json({ message: "Liên hệ đã tồn tại giữa hai người dùng này." });
+        .status(404)
+        .json({ message: "Không tìm thấy lời mời để chấp nhận" });
     }
 
-    // Thêm user B vào danh sách liên hệ của user A
-    const contactA = await createContactService({
+    const receiverNickname = deletedRequest.nickname;
+
+    // Tạo liên hệ cho contact A với nickname của người gửi lời mời
+    const contactA = new Contact({
       userId,
       contactUserId,
-      nickname,
-      status,
+      nickname: senderNickname,
+      status: "accepted",
     });
-    // Thêm user A vào danh sách liên hệ của user B
-    const contactB = await createContactService({
+    // Tạo liên hệ cho contact B với nickname của người nhận lời mời
+    const contactB = new Contact({
       userId: contactUserId,
       contactUserId: userId,
-      nickname,
-      status,
+      nickname: receiverNickname,
+      status: "accepted",
     });
-    emitContactRequest(userId, contactUserId, nickname);
+
+    await contactA.save();
+    await contactB.save();
+
     res
-      .status(201)
+      .status(200)
       .json({
-        message: "Tạo liên hệ thành công",
+        message: "Chấp nhận lời mời thành công",
         contacts: [contactA, contactB],
       });
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Lỗi khi tạo liên hệ", error: err.message });
+      .json({ message: "Lỗi khi chấp nhận lời mời", error: err.message });
+  }
+};
+
+// Cần chỉnh sửa lại khi reject sẽ xoá liên hệ thay vì thay đổi trạng thái reject
+export const rejectContactRequest = async (req, res) => {
+  const { userId, contactUserId } = req.body;
+
+  try {
+    // Cập nhật trạng thái của lời mời
+    const updatedContact = await Contact.findOneAndUpdate(
+      { userId: contactUserId, contactUserId: userId, status: "pending" },
+      { status: "rejected" },
+      { new: true }
+    );
+
+    if (!updatedContact) {
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy lời mời để từ chối" });
+    }
+
+    res.status(200).json({ message: "Đã từ chối lời mời thành công" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Lỗi khi từ chối lời mời", error: err.message });
   }
 };
 
@@ -140,4 +193,19 @@ export const getContactsByContactUserId = async (req, res) => {
   const { contactUserId } = req.params;
   const contacts = await getContactsByContactUserIdService(contactUserId);
   res.json(contacts);
+};
+
+export const getPendingContacts = async (req, res) => {
+  const { contactUserId } = req.params;
+
+  try {
+    const pendingContacts = await Contact.find({
+      contactUserId: contactUserId,
+      status: "pending"
+    });
+
+    res.status(200).json(pendingContacts);
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi khi lấy danh sách liên hệ", error: err.message });
+  }
 };

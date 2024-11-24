@@ -20,8 +20,16 @@ const contactSchema = new Schema({
    nickname: {
       type: String
    },
-   status: {
+   senderNickname: {
       type: String
+   },
+   profilePicture: {
+      type: String
+   },
+   status: {
+      type: String,
+      enum: ['pending', 'accepted', 'rejected'],
+      default: 'pending'
    },
    createdAt: {
       type: Date,
