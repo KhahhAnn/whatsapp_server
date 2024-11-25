@@ -23,7 +23,10 @@ const contactSchema = new Schema({
    senderNickname: {
       type: String
    },
-   profilePicture: {
+   avatar: {
+      type: String
+   },
+   senderAvatar: {
       type: String
    },
    status: {

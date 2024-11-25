@@ -9,7 +9,7 @@ import { emitContactRequest } from "../websockets/SocketHandler.js";
 import Contact from "../models/contact.js";
 
 export const createContact = async (req, res) => {
-  const { userId, contactUserId, nickname, senderNickname } = req.body;
+  const { userId, contactUserId, nickname, senderNickname, avatar, senderAvatar } = req.body;
 
   try {
     if (userId === contactUserId) {
@@ -35,20 +35,14 @@ export const createContact = async (req, res) => {
     const newContactRequest = new Contact({
       userId,
       contactUserId,
-      nickname: nickname, // nickname của contact A
-      senderNickname: senderNickname, // nickname của người gửi lời mời
+      nickname: nickname,
+      senderNickname: senderNickname,
+      avatar: avatar,
+      senderAvatar: senderAvatar,
       status: "pending",
     });
 
     await newContactRequest.save();
-    //Log ra nickname của contact A và người gửi lời mời
-    console.log(
-      "Nickname của người nhận lời mời: ",
-      nickname,
-      "Nickname của người gửi lời mời: ",
-      senderNickname
-    );
-
     // Phát sự kiện lời mời thêm liên hệ với cả nickname của contact A và người gửi lời mời
     emitContactRequest(userId, contactUserId, nickname, senderNickname);
     res.status(200).json({ message: "Lời mời đã được gửi" });
@@ -60,7 +54,7 @@ export const createContact = async (req, res) => {
 };
 
 export const acceptContactRequest = async (req, res) => {
-  const { userId, contactUserId, senderNickname } = req.body;
+  const { userId, contactUserId, senderNickname, senderAvatar } = req.body;
 
   try {
     // Tìm và xóa lời mời
@@ -69,6 +63,7 @@ export const acceptContactRequest = async (req, res) => {
         userId: contactUserId,
         contactUserId: userId,
         senderNickname: senderNickname,
+        senderAvatar: senderAvatar,
         status: "pending",
       }
     );
@@ -80,12 +75,14 @@ export const acceptContactRequest = async (req, res) => {
     }
 
     const receiverNickname = deletedRequest.nickname;
+    const receiverAvatar = deletedRequest.avatar;
 
     // Tạo liên hệ cho contact A với nickname của người gửi lời mời
     const contactA = new Contact({
       userId,
       contactUserId,
       nickname: senderNickname,
+      avatar: senderAvatar,
       status: "accepted",
     });
     // Tạo liên hệ cho contact B với nickname của người nhận lời mời
@@ -93,6 +90,7 @@ export const acceptContactRequest = async (req, res) => {
       userId: contactUserId,
       contactUserId: userId,
       nickname: receiverNickname,
+      avatar: receiverAvatar,
       status: "accepted",
     });
 
@@ -117,14 +115,12 @@ export const rejectContactRequest = async (req, res) => {
   const { userId, contactUserId } = req.body;
 
   try {
-    // Cập nhật trạng thái của lời mời
-    const updatedContact = await Contact.findOneAndUpdate(
-      { userId: contactUserId, contactUserId: userId, status: "pending" },
-      { status: "rejected" },
-      { new: true }
+    // Xóa lời mời thay vì cập nhật trạng thái
+    const deletedContact = await Contact.findOneAndDelete(
+      { userId: contactUserId, contactUserId: userId, status: "pending" }
     );
 
-    if (!updatedContact) {
+    if (!deletedContact) {
       return res
         .status(404)
         .json({ message: "Không tìm thấy lời mời để từ chối" });
