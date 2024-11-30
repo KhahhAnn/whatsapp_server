@@ -11,7 +11,7 @@ const setupSocketServer = (server) => {
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
     },
-    maxHttpBufferSize: 1e8 // 100MB
+    maxHttpBufferSize: 1e8, // 100MB
   });
 
   io.use((socket, next) => {
@@ -47,12 +47,23 @@ const setupSocketServer = (server) => {
 
     socket.on("privateMessage", ({ message, to }) => {
       console.log("Received message: ", message, to);
-      if (message.startsWith("data:image/") || message.startsWith("data:video/")) {
+      if (
+        message.startsWith("data:image/") ||
+        message.startsWith("data:video/")
+      ) {
         console.log("Sending image/video message");
       }
       socket.to(to).emit("privateMessageToReceiver", {
         message: message,
         from: socket.userId,
+      });
+    });
+
+    socket.on("privateCall", ({ from, to, callId }) => {
+      console.log("Received call: ", { from, to, callId });
+      socket.to(to).emit("privateCallToReceiver", {
+        from: socket.userId,
+        callId,
       });
     });
 
