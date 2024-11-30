@@ -28,7 +28,7 @@ export const deleteContactService = async (contactId) => {
 export const getContactsByUserService = async (userId, page = 1, limit = 10) => {
    const skip = (page - 1) * limit;
 
-   return await Contact.find({ userId: userId })
+   return await Contact.find({ userId: userId, status: "accepted" })
       .sort({ createdAt: -1 })  // Sắp xếp theo thời gian tạo
       .skip(skip)  // Bỏ qua số lượng cần thiết để phân trang
       .limit(limit);  // Giới hạn số lượng kết quả
