@@ -11,7 +11,6 @@ const setupSocketServer = (server) => {
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
     },
-    maxHttpBufferSize: 1e8, // 100MB
   });
 
   io.use((socket, next) => {
