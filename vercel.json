@@ -7,5 +7,10 @@
    "routes": [{
       "src": "/(.*)",
       "dest": "/app.js"
-   }]
+   }],
+   "functions": {
+      "api/**/*.js": {
+         "includeFiles": ["models/**", "security/**", "controllers/**", "middlewares/**", "routes/**", "utils/**", "websockets/**"]
+      }
+   }
 }
