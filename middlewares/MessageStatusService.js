@@ -1,4 +1,4 @@
-import { MessageStatus } from "../models/MessageStatus.js";
+import { MessageStatus } from "../models/messageStatus.js";
 
 // Tạo trạng thái tin nhắn mới
 export const createMessageStatusService = async ({ messageId, userId, status }) => {

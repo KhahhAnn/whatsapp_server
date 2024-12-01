@@ -1,4 +1,4 @@
-import GroupChat from "../models/GroupChat.js";
+import GroupChat from "../models/`GroupChat.js";
 import GroupMember from "../models/groupMember.js";
 import Group from "../models/groups.js";
 
