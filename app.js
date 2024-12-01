@@ -10,6 +10,7 @@ import {
   // rateLimiter,
   securityHeaders,
 } from "./security/SecurityConfig.js";
+import cors from "cors"
 import { connectDB } from "./utils/features.js";
 import ContactRouter from "./routes/ContactRouter.js";
 import GroupChatRouter from "./routes/GroupChatRouter.js";
@@ -27,6 +28,8 @@ dotenv.config({
 
 const app = express();
 const serverPort = process.env.PORT || 3000;
+
+app.use(cors());
 app.use(bodyParser.json({ limit: '10mb' })); // Thay đổi '10mb' thành kích thước bạn muốn
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
