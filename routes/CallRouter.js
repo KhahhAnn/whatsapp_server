@@ -10,9 +10,9 @@ import { authenticateToken } from "../security/JwtConfig.js";
 
 const CallRouter = express.Router();
 
-CallRouter.post("/call", authenticateToken, createCall);
 CallRouter.post("/token", authenticateToken, createCallToken);
-CallRouter.put("/:callId/end", authenticateToken, endCall);
+CallRouter.post("/call-start", authenticateToken, createCall);
+CallRouter.put("/call-end/:callId", authenticateToken, endCall);
 CallRouter.get("/:callId", authenticateToken, getCallDetails);
 CallRouter.get("/calls-user/:userId", authenticateToken, getCallsByUser);
 

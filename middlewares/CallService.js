@@ -1,9 +1,9 @@
 import { Call } from "../models/Call.js";
 
 // Tạo cuộc gọi mới
-export const createCallService = async ({ callerId, receiverId, callType }) => {
+export const createCallService = async ({ callerId, callerName, receiverId, receiverName, callType }) => {
    const startTime = new Date();
-   const newCall = new Call({ callerId, receiverId, startTime, callType });
+   const newCall = new Call({ callerId, callerName, receiverId, receiverName, startTime, callType });
    await newCall.save();
    return newCall;
 };
