@@ -15,5 +15,6 @@ CallRouter.post("/call-start", authenticateToken, createCall);
 CallRouter.put("/call-end/:callId", authenticateToken, endCall);
 CallRouter.get("/:callId", authenticateToken, getCallDetails);
 CallRouter.get("/calls-user/:userId", authenticateToken, getCallsByUser);
+CallRouter.get("/call-detail/:callId", authenticateToken, getCallDetails);
 
 export default CallRouter;
