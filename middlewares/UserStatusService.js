@@ -1,4 +1,4 @@
-import { UserStatus } from "../models/UserStatus.js";
+import { UserStatus } from "../models/userStatus.js";
 
 // Tạo trạng thái mới cho người dùng
 export const createUserStatusService = async ({ userId, statusText, mediaUrl, expiresAt }) => {
