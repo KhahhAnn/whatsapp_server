@@ -14,10 +14,16 @@ const streamClient = new StreamClient(apiKey, secret, {
 
 // Tạo cuộc gọi mới
 export const createCall = async (req, res) => {
-  const { callerId, receiverId, callType } = req.body;
+  const { callerId, callerName, receiverId, receiverName, callType } = req.body;
 
   try {
-    const call = await createCallService({ callerId, receiverId, callType });
+    const call = await createCallService({
+      callerId,
+      callerName,
+      receiverId,
+      receiverName,
+      callType,
+    });
     res.status(201).json({ message: "Tạo cuộc gọi thành công", call });
   } catch (err) {
     res
