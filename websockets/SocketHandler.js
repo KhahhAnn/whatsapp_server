@@ -6,12 +6,11 @@ const userSockets = new Map(); // Lưu trữ mối quan hệ giữa userId và s
 const setupSocketServer = (server) => {
   io = new Server(server, {
     cors: {
-      origin: ["http://localhost:5173/", "https://whatsapp-fe-deploy-rd2r.vercel.app/"],
+      origin: ["http://localhost:5173/*", "https://whatsapp-fe-deploy-rd2r.vercel.app/*"],
       methods: ["GET", "POST"],
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
     },
-    maxHttpBufferSize: 1e8, // 100MB
   });
 
   io.use((socket, next) => {
