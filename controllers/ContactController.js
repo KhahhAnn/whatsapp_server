@@ -31,6 +31,18 @@ export const createContact = async (req, res) => {
         .json({ message: "Đã gửi lời mời đến người dùng này." });
     }
 
+    const existingAcceptedContact = await Contact.findOne({
+      userId: userId,
+      contactUserId: contactUserId,
+      status: "accepted",
+  });
+  
+  if (existingAcceptedContact) {
+      return res
+        .status(400)
+        .json({ message: "Người dùng này đã là một liên hệ của bạn." });
+  }
+
     // Tạo một lời mời mới với nickname của contact A và người gửi lời mời
     const newContactRequest = new Contact({
       userId,

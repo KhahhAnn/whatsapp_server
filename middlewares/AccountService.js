@@ -4,11 +4,19 @@ import { generateAccessToken, generateRefreshToken } from "../security/JwtConfig
 
 
 export const registerUserService = async ({ username, email, password, phoneNumber }) => {
-   const existingUser = await User.findOne({ email });
-   if (existingUser) {
+   // Kiểm tra trùng email
+   const existingUserByEmail = await User.findOne({ email });
+   if (existingUserByEmail) {
       throw new Error("Email đã được sử dụng");
    }
 
+   // Kiểm tra trùng số điện thoại
+   const existingUserByPhone = await User.findOne({ phoneNumber });
+   if (existingUserByPhone) {
+      throw new Error("Số điện thoại đã được sử dụng");
+   }
+
+   // Tiến hành mã hóa mật khẩu và tạo người dùng mới
    const passwordHash = await bcrypt.hash(password, 10);
    const newUser = new User({
       username,
@@ -19,15 +27,17 @@ export const registerUserService = async ({ username, email, password, phoneNumb
 
    await newUser.save();
 
+   // Tạo access token và refresh token
    const accessToken = generateAccessToken(newUser);
    const refreshToken = generateRefreshToken(newUser);
 
    return { 
-      userId: newUser.userId,
+      userId: newUser._id, // Đảm bảo trả về _id đúng của mongoDB
       accessToken,
       refreshToken
    };
 };
+
 
 
 export const loginUserService = async ({ email, password, rememberMe }) => {

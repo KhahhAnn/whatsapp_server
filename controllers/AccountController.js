@@ -3,7 +3,7 @@ import { getContactsByUserService, updateContactService, getContactsByContactUse
 // Đăng ký người dùng
 export const registerUser = async (req, res) => {
    if (!req.body) {
-      return res.status(400).json({ message: req.body});
+      return res.status(400).json({ message: "Dữ liệu gửi lên không hợp lệ" });
    }
 
    const { username, email, password, phoneNumber } = req.body;
@@ -12,13 +12,19 @@ export const registerUser = async (req, res) => {
       const result = await registerUserService({ username, email, password, phoneNumber });
       res.status(201).json({ message: "Đăng ký thành công", userId: result.userId });
    } catch (err) {
+      // Kiểm tra dựa trên các lỗi đã nêu trong service
       if (err.message === "Email đã được sử dụng") {
          return res.status(400).json({ message: err.message });
       }
+      if (err.message === "Số điện thoại đã được sử dụng") {
+         return res.status(400).json({ message: err.message });
+      }
+
       console.error("Lỗi khi đăng ký người dùng:", err);
       res.status(500).json({ message: "Lỗi máy chủ" });
    }
 };
+
 
 // Đăng nhập người dùng
 export const loginUser = async (req, res) => {
